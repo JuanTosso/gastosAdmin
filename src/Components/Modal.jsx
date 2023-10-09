@@ -1,14 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CerrarBtn from "../img/cerrar.svg";
 import Mensaje from "./Mensaje";
 
-const Modal = ({ setModal, animarModal, setAnimarModale, guardarGasto }) => {
+const Modal = ({
+  setModal,
+  animarModal,
+  setAnimarModale,
+  guardarGasto,
+  gastoEditar,
+}) => {
   const [input, setInput] = useState({
     nombre: "",
     cantidad: "",
     categoria: "",
   });
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (Object.keys(gastoEditar).length > 0) {
+      setInput(gastoEditar);
+    }
+  }, []);
 
   const handleForm = (e) => {
     setInput({
@@ -48,7 +60,7 @@ const Modal = ({ setModal, animarModal, setAnimarModale, guardarGasto }) => {
         onSubmit={handleSubmit}
         className={`formulario ${animarModal ? "animar" : "cerrar"}`}
       >
-        <legend>Nuevo Gasto</legend>
+        <legend> {gastoEditar.nombre ? "Editar Gasto" : "Nuevo Gasto"}</legend>
 
         <div className="campo">
           <label htmlFor="nombre">Nombre Gasto</label>
@@ -76,19 +88,27 @@ const Modal = ({ setModal, animarModal, setAnimarModale, guardarGasto }) => {
 
         <div className="campo">
           <label htmlFor="categoria">Categoria</label>
-          <select name="categoria" id="categoria" onChange={handleForm}>
+          <select
+            name="categoria"
+            id="categoria"
+            value={input.categoria}
+            onChange={handleForm}
+          >
             <option value=""> -- Seleccione-- </option>
             <option value="ahorro"> Ahorro </option>
             <option value="comida"> Comida </option>
             <option value="casa"> Casa </option>
-            <option value="gastos varios"> Gastos Varios</option>
+            <option value="gastos"> Gastos Varios</option>
             <option value="ocio"> Ocio </option>
             <option value="salud"> Salud </option>
             <option value="suscripciones"> Suscripciones </option>
           </select>
         </div>
 
-        <input type="submit" value="Añadir gasto" />
+        <input
+          type="submit"
+          value={gastoEditar.nombre ? "Guardar cambios" : "Añadir gasto"}
+        />
         {error.length > 0 && <Mensaje tipo="error">{error}</Mensaje>}
       </form>
       <p>Modal</p>
